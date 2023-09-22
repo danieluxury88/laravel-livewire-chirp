@@ -35,9 +35,16 @@ new class extends Component {
         $this->editing = null;
     }
 
+    public function delete(Chirp $chirp): void
+    {
+        $this->authorize('delete', $chirp);
+        $chirp->delete();
+        $this->getChirps();
+    }
+
 }; ?>
 
-<div class="mt-6 bg-white shadow-sm rounded-lg divide-y"> 
+<div class="mt-6 bg-white shadow-sm rounded-lg divide-y">
     @foreach ($chirps as $chirp)
         <div class="p-6 flex space-x-2" wire:key="{{ $chirp->id }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 -scale-x-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -65,16 +72,20 @@ new class extends Component {
                                 <x-dropdown-link wire:click="edit({{ $chirp->id }})">
                                     {{ __('Edit') }}
                                 </x-dropdown-link>
+                                <x-dropdown-link wire:click="delete({{ $chirp->id }})"> 
+                                    {{ __('Delete') }}
+                                </x-dropdown-link> 
                             </x-slot>
                         </x-dropdown>
                     @endif
                 </div>
-                @if ($chirp->is($editing)) 
+                <p class="mt-4 text-lg text-gray-900">{{ $chirp->message }}</p>
+                @if ($chirp->is($editing))
                     <livewire:chirps.edit :chirp="$chirp" :key="$chirp->id" />
                 @else
                     <p class="mt-4 text-lg text-gray-900">{{ $chirp->message }}</p>
-                @endif 
+                @endif
             </div>
         </div>
-    @endforeach 
+    @endforeach
 </div>
